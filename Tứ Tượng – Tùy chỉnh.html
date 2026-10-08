@@ -1,0 +1,448 @@
+<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Tứ Tượng – Tùy chỉnh</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&display=swap"><style>
+:root{--bg:#eceae4;--panel:#f7f6f2;--line:#bdb9ad;--ink:#1d2024;--mute:#6a6e75;--boss:#c8412a;--weak:#f3c98b;--cell:#fbfaf7;
+--Kim:#b9b39f;--Mộc:#4aa05a;--Thổ:#c4991f;--Thủy:#3b82cc;--Hỏa:#dd4d33;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#13171b;--panel:#1b2025;--line:#38414a;--ink:#e9e7e1;--mute:#8f979f;--boss:#ee6a4f;--weak:#7a5a2c;--cell:#171c20;--Kim:#d9d4c4;--Mộc:#5fb36e;--Thổ:#cfa33a;--Thủy:#4a90d9;--Hỏa:#e5583e}}
+:root[data-theme="dark"]{--bg:#13171b;--panel:#1b2025;--line:#38414a;--ink:#e9e7e1;--mute:#8f979f;--boss:#ee6a4f;--weak:#7a5a2c;--cell:#171c20;--Kim:#d9d4c4;--Mộc:#5fb36e;--Thổ:#cfa33a;--Thủy:#4a90d9;--Hỏa:#e5583e}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 "Be Vietnam Pro",system-ui,sans-serif}
+main{max-width:1100px;margin:0 auto;padding:18px 14px 40px}
+h1{font-size:22px;font-weight:800;margin:0 0 2px}
+.sub{color:var(--mute);margin:0 0 12px;font-size:13px}
+.top{display:grid;grid-template-columns:minmax(0,480px) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:760px){.top{grid-template-columns:1fr}}
+.board{display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:repeat(7,1fr);width:100%;max-width:480px;aspect-ratio:1;margin:0 auto}
+.c{border:1px solid var(--line);background:var(--cell);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:clamp(11px,3vw,16px);position:relative;transition:background .15s}
+.c.weak{background:var(--weak)}.c.scan{background:color-mix(in srgb,var(--boss) 35%,var(--cell))}.c.hit{background:var(--boss);color:#fff}
+.tip{border:none;background:none}
+.fx{font-size:clamp(10px,2.6vw,14px);line-height:1;text-align:center;word-break:break-all}
+.tok{width:84%;aspect-ratio:1;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#111;font-weight:800;font-size:clamp(9px,2.4vw,12px);line-height:1.05;border:2px solid var(--ink)}
+.tok i{font-style:normal;font-size:clamp(11px,3vw,16px)}
+.tok.dead{opacity:.35}.tok.shake{animation:sh .35s}
+@keyframes sh{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.dl{position:absolute;color:var(--mute);font-size:12px;font-weight:600}
+.boss svg{width:70%;transition:transform .35s}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.bar{height:10px;background:var(--line);border-radius:5px;overflow:hidden;margin:4px 0 6px}
+.bar i{display:block;height:100%;background:var(--boss);transition:width .3s}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+button{font:inherit;font-weight:600;padding:7px 11px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+button:hover:not(:disabled){border-color:var(--ink)}button:focus-visible{outline:2px solid var(--boss);outline-offset:2px}
+button:disabled{opacity:.4;cursor:not-allowed}button.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.on{border-color:var(--boss);color:var(--boss)}
+.log{margin:10px 0 0;padding:0;list-style:none;font-size:13px;color:var(--mute);max-height:170px;overflow:auto}
+.log li:first-child{color:var(--ink);font-weight:600}
+.chars{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:18px}
+.ch{border-left:6px solid var(--ec)}
+.ch h3{margin:0;font-size:15px;display:flex;justify-content:space-between;gap:6px}
+.tag{font-size:12px;color:var(--mute)}.tag b{color:var(--boss)}
+.ch .bar i{background:var(--ec)}
+.sk{margin-top:7px}
+.sk button{width:100%;text-align:left;display:flex;justify-content:space-between;gap:8px;padding:6px 10px}
+.khibox{display:flex;align-items:center;gap:12px;max-width:480px;margin:0 auto 10px;padding:8px 14px;background:var(--panel);border:1px solid var(--line);border-radius:10px}
+.kn{font-size:30px;font-weight:800;line-height:1}.kl{font-size:12px;color:var(--mute);line-height:1.3}.pips{margin-left:auto;font-size:20px;letter-spacing:3px}
+.msg{font-weight:800;font-size:17px;margin:0}
+.note{color:var(--mute);font-size:12.5px;margin-top:12px}
+
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}h3{margin:0 0 6px}
+.fl{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:6px 0}label{font-size:13px}
+input[type=number],select{font:inherit;font-size:13px;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);max-width:100%}input[type=number]{width:72px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.chip{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:2px 10px;font-size:12.5px}.chip a{color:var(--boss);text-decoration:none;margin-left:4px}
+details>summary{cursor:pointer;font-weight:800;margin-bottom:8px}
+.bar2{position:sticky;top:0;z-index:5;display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line)}.bar2 b{font-size:17px;margin-right:auto}.bar2 button.pri{font-size:15px;padding:9px 16px}</style></head><body><div class="bar2"><b>Tứ Tượng</b><button class="pri" onclick="start(0,DEFCF())">🎲 Ván ngẫu nhiên</button><button onclick="start()">▶ Bắt đầu theo cấu hình</button><button onclick="toggleSetup()">⚙ Cấu hình</button></div><main><details id="setup"><summary>Cấu hình ván</summary><div id="setupBody"></div></details>
+<div class="top"><div><div id="khibox" class="khibox"></div><div id="board" class="board"></div><p class="note" style="text-align:center">⚔️ đòn vào hướng này +1 sát thương · 🛡️ chặn hoàn toàn sát thương từ hướng này · 🌵 giảm một nửa · nền nâu = điểm yếu</p></div>
+<div><div class="panel" id="boss">Chưa có ván. Mở cấu hình và bấm "Bắt đầu ván".</div><div class="panel" style="margin-top:12px"><div id="status"></div><div class="row"><button id="bcw" onclick="doRot(1)" disabled>↻ Xoay cùng chiều</button><button id="bccw" onclick="doRot(-1)" disabled>↺ Xoay ngược chiều</button><button id="bundo" onclick="undoRot()" disabled>Hủy xoay</button><button id="bend" class="pri" onclick="endT()" disabled>Kết thúc lượt</button><button id="bnew" onclick="toggleSetup()">Cấu hình…</button></div><ul class="log" id="log"></ul></div></div></div>
+<div class="chars" id="cards"></div>
+<p class="note">Sát thương: điểm yếu ×2; skill có hệ khắc hệ boss ×1.5; giáp mất sau lượt boss (trừ giáp mỗi lượt từ buff). Hệ bị boss khắc chịu ×1.5. Tương sinh liên hoàn: nhân vật hành động ngay sau người có hệ sinh ra hệ của mình gây ×2 (Mộc → Hỏa → Thổ → Kim → Thủy → Mộc), reset mỗi lượt. Khí dư giữ lại (tối đa 6), lượt bỏ qua +1 Khí.</p></main><script>
+// 99 skill: mỗi skill {id,cls,name,el,c(cost),ops}. el=null → dùng hệ của nhân vật
+const SKILLS=[];
+const K=(cls,name,el,c,ops,lim)=>SKILLS.push({id:cls+(SKILLS.filter(s=>s.cls===cls).length+1),cls,name,el,c,ops,lim});
+const dmg=o=>({t:'dmg',...o}),sh=(to,v,p=0)=>({t:'sh',to,v,p}),hl=(to,v,p=0)=>({t:'hl',to,v,p}),pr=(to,m)=>({t:'pr',to,m}),
+ set=v=>({t:'set',v}),eq=()=>({t:'eq'}),inv=()=>({t:'inv'}),swp=()=>({t:'swapP'}),perm=m=>({t:'perm',m}),
+ sw=w=>({t:'swap',w}),kh=v=>({t:'kh',v}),khP=(min,v)=>({t:'khP',min,v}),poi=v=>({t:'poi',v}),weaken=()=>({t:'weaken'}),stun=()=>({t:'stun'}),
+ strip=what=>({t:'strip',what}),purge=()=>({t:'purge'}),pow=m=>({t:'pow',m}),thr=v=>({t:'thr',v}),wp=()=>({t:'wp'}),rot=s=>({t:'rot',s}),
+ elem=()=>({t:'elem'}),hurt=v=>({t:'hurt',v}),trap=(val,ops)=>({t:'trap',val,ops});
+// Chiến binh (f)
+K('f','Chém liên hoàn','Kim',1,[dmg({b:1.5})]);
+K('f','Thủ thế','Thổ',1,[sh('self',2)]);
+K('f','Phản công','Kim',1,[trap(6,[dmg({b:6})])]);
+K('f','Bắc phong','Mộc',1,[dmg({b:1,dir:[0,2.5]})]);
+K('f','Đột phá','Hỏa',1,[sw('opp'),dmg({b:1.5})]);
+K('f','Hộ giáp đoàn','Thổ',2,[sh('all',1)]);
+K('f','Chém xuyên giáp','Kim',2,[dmg({b:2.5,ign:1})]);
+K('f','Đòn ngược hướng','Thủy',1,[dmg({b:1,back:2})]);
+K('f','Đối mặt','Mộc',1,[dmg({b:1,face:1.8})]);
+K('f','Nộ khí','Hỏa',1,[dmg({b:1,hpx:.5})]);
+K('f','Nhịp chiến','Kim',1,[dmg({b:1}),khP(.4,1)]);
+// Hộ vệ (g)
+K('g','Khiên tường','Thổ',1,[sh('self',3)]);
+K('g','Thế chỗ','Thổ',1,[sw('low'),sh('self',2)]);
+K('g','Hộ tống Bắc','Thổ',1,[sh('N',2)]);
+K('g','Hộ tống đối diện','Thổ',1,[sh('opp',2)]);
+K('g','Bức tường','Thổ',2,[sh('all',1.5)]);
+K('g','Gai giáp','Mộc',1,[thr(1)]);
+K('g','Bất khuất','Thổ',1,[sh('self',1,8)]);
+K('g','Mồi nhử','Thổ',2,[pr('self',12),sh('self',3)]);
+K('g','Phản chấn','Kim',2,[trap(5,[dmg({b:4}),sh('self',3)])]);
+K('g','Che chắn bên','Thổ',1,[sh('cw',2)]);
+K('g','Đập khiên','Kim',1,[dmg({b:0,shx:.6})]);
+// Sát thủ (x)
+K('x','Nhát kết liễu','Kim',2,[dmg({b:4})]);
+K('x','Đâm lén','Kim',1,[hurt(1),dmg({b:2})]);
+K('x','Ám sát','Hỏa',2,[dmg({b:2,wb:3})]);
+K('x','Tập kích sau lưng','Thủy',1,[dmg({b:1,back:3})]);
+K('x','Quyết tử','Hỏa',2,[dmg({b:3,hpx:1})]);
+K('x','Chớp nhoáng','Mộc',1,[dmg({b:1.5})]);
+K('x','Đòn chí mạng','Kim',2,[dmg({b:1,p:8})]);
+K('x','Mượn kiếm','Hỏa',1,[dmg({b:1,bor:1})]);
+K('x','Phá khiên','Kim',1,[strip('own'),dmg({b:1})]);
+K('x','Chạm điểm yếu','Thổ',1,[sw('weak'),dmg({b:1})]);
+K('x','Vô ảnh','Thủy',1,[pr('self',.17),dmg({b:1})]);
+// Pháp sư (m)
+['Kim','Mộc','Thổ','Thủy','Hỏa'].forEach(e=>K('m',e+' thuật',e,1,[dmg({b:1.9})]));
+K('m','Dịch chuyển','Thủy',1,[sw('weak'),dmg({b:1})]);
+K('m','Sao băng','Hỏa',2,[dmg({b:4.5})]);
+K('m','Hộ thuẫn ma pháp','Thủy',1,[sh('self',2)]);
+K('m','Nguyên tố hóa','Mộc',1,[elem(),dmg({b:1})]);
+K('m','Lốc xoáy','Mộc',2,[rot(1),dmg({b:3.5})]);
+K('m','Pháp trận','Thổ',2,[wp(),dmg({b:2})]);
+// Kẻ lừa (t)
+K('t','Khiêu khích','Hỏa',1,[pr('self',3),sh('self',1)]);
+K('t','Ẩn mình','Thủy',1,[pr('self',.17),kh(1)],1);
+K('t','Chuyển họa','Thủy',1,[pr('self',.17),pr('opp',3)]);
+K('t','Dịch họa','Mộc',1,[pr('self',.17),pr('cw',3),sh('cw',2)]);
+K('t','Dịch họa ngược','Mộc',1,[pr('self',.17),pr('ccw',3),sh('ccw',2)]);
+K('t','Phân tán','Kim',1,[eq(),sh('all',.5)]);
+K('t','Đảo ngược','Kim',1,[inv(),sh('self',2)]);
+K('t','Hoán xác suất','Thủy',1,[swp(),sh('self',2)]);
+K('t','Chỉ điểm','Hỏa',2,[set(.7),sh('self',4)]);
+K('t','Bẫy tâm lý','Kim',1,[perm(.35),sh('self',2)]);
+K('t','Nghi binh','Thủy',1,[pr('self',.3),pr('opp',.3),sh('cw',1),sh('ccw',1)]);
+// Con bạc (b)
+K('b','Liều thì ăn nhiều','Hỏa',1,[dmg({b:1,p:4})]);
+K('b','Đặt cược','Hỏa',2,[pr('self',3),dmg({b:1,p:6})]);
+K('b','Bảo hiểm','Thổ',1,[sh('self',0,8)]);
+K('b','Hồi máu may rủi','Mộc',1,[hl('self',0,8)]);
+K('b','Canh bạc lớn','Hỏa',2,[dmg({b:0,pm:10})]);
+K('b','Ván cuối','Kim',1,[dmg({b:0,q:3})]);
+K('b','Nhà cái','Kim',1,[pr('self',2),khP(.35,2)]);
+K('b','Tung xúc xắc','Mộc',1,[dmg({b:2,rnd:[.25,2]})]);
+K('b','Chia lãi','Kim',2,[sh('all',0,4)]);
+K('b','Cược mạng','Hỏa',1,[hurt(1),dmg({b:1,p:8})]);
+K('b','Lật ngược thế cờ','Thủy',1,[trap(3,[kh(3),hl('self',2)])]);
+// Ẩn sĩ (d)
+K('d','Tăng lực','Mộc',1,[pow(1.5)]);
+K('d','Hộ mệnh','Thổ',2,[sh('all',1)]);
+K('d','Gai nhọn','Mộc',1,[thr(1)]);
+K('d','Cộng sinh','Mộc',1,[sh('cw',1),sh('ccw',1)]);
+K('d','Hấp thụ linh khí','Thủy',2,[kh(4)],1);
+K('d','Mộc giáp','Mộc',2,[sh('self',3),thr(1)]);
+K('d','Phúc lành','Thổ',2,[pow(1.5),hl('all',1)]);
+K('d','Sinh khí','Mộc',1,[hl('low',1),sh('low',1)]);
+K('d','Cắm rễ','Mộc',1,[perm(.5),sh('self',2)]);
+K('d','Gió hộ tống','Thủy',1,[sh('N',2),sh('opp',1)]);
+K('d','Dưỡng mạch','Mộc',1,[trap(4,[hl('self',4),sh('self',2)])]);
+// Y sư (h)
+K('h','Hồi sinh','Mộc',1,[hl('low',2)]);
+K('h','Cam lộ','Thủy',2,[hl('all',2)]);
+K('h','Thánh quang','Kim',2,[hl('all',1),sh('all',1)]);
+K('h','Hồi sức','Mộc',1,[hl('self',2)]);
+K('h','Gia hộ','Kim',1,[sh('low',2)]);
+K('h','Chữa theo thế','Thủy',1,[hl('low',1,4)]);
+K('h','Trị liệu Bắc','Mộc',1,[hl('N',3)]);
+K('h','Hồi sinh chung','Thủy',1,[hl('cw',2),hl('ccw',2)]);
+K('h','Phục sinh ấn','Thủy',1,[trap(4,[hl('low',5)])]);
+K('h','Thanh tẩy','Thủy',1,[purge(),sh('self',1)]);
+K('h','Hiến tế','Hỏa',1,[hurt(1),hl('all',1)]);
+// Dược sư (a)
+K('a','Độc','Mộc',1,[poi(2)]);
+K('a','Làm yếu','Thủy',1,[weaken()]);
+K('a','Ăn mòn','Kim',1,[strip('all'),poi(2)]);
+K('a','Độc tố','Mộc',2,[poi(4)]);
+K('a','Axit hướng','Kim',1,[strip('own'),dmg({b:1})]);
+K('a','Phân giải','Hỏa',1,[dmg({b:1,pois:.6})]);
+K('a','Khói mù','Thủy',2,[pr('self',.17),weaken(),sh('all',1)]);
+K('a','Thuốc mê','Thủy',3,[stun()]);
+K('a','Thuốc nổ','Hỏa',2,[dmg({b:3}),poi(1)]);
+K('a','Thuốc hồi','Mộc',1,[hl('low',1),poi(1)]);
+K('a','Hòa tan giáp','Kim',1,[strip('giap'),dmg({b:1.5})]);
+const ALSO={'Khiêu khích':['g','f'],'Ẩn mình':['x'],'Chuyển họa':['d','h'],'Dịch họa':['m'],'Dịch họa ngược':['d'],'Phân tán':['h'],'Chỉ điểm':['b'],'Nghi binh':['a','g']};
+SKILLS.forEach(s=>{if(ALSO[s.name])s.also=ALSO[s.name]});
+const POOL=k=>SKILLS.filter(s=>s.cls===k||(s.also||[]).includes(k));
+
+const SKM={atk:{id:'atk',cls:'*',name:'Tấn công',el:null,c:1,ops:[{t:'dmg',b:0,ba:1}]}};SKILLS.forEach(s=>SKM[s.id]=s);
+const EL=['Kim','Mộc','Thổ','Thủy','Hỏa'],KHAC={Kim:'Mộc',Mộc:'Thổ',Thổ:'Thủy',Thủy:'Hỏa',Hỏa:'Kim'},SINH={Mộc:'Hỏa',Hỏa:'Thổ',Thổ:'Kim',Kim:'Thủy',Thủy:'Mộc'};
+const CL={f:{hp:4,a:1},g:{hp:6,a:.5},x:{hp:3,a:1.6},m:{hp:3,a:1},t:{hp:4,a:.8},b:{hp:4,a:1},d:{hp:4,a:.7},h:{hp:4,a:.6},a:{hp:4,a:.8}};
+const BM=['normal','normal','regen','dual','normal','storm'];
+let rng=Math.random;const rnd=n=>Math.floor(rng()*n);
+const mul=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+// ---- tinh chỉnh ----
+function scale(ops,k){for(const o of ops){for(const f of ['b','p','q','pm','wb','hpx','shx','pois','v','val'])if(typeof o[f]==='number'&&!(o.t==='pr'||o.t==='set'))o[f]=+(o[f]*k).toFixed(2);if(o.t==='pow')o.m=+(1+(o.m-1)*k).toFixed(2);if(o.t==='trap')scale(o.ops,k)}}
+function tune(list){for(const [id,c,k] of list){const s=SKM[id];if(c!==null&&c!==undefined)s.c=c;if(k&&k!==1)scale(s.ops,k)}}
+// ---- state ----
+const cl=S=>JSON.parse(JSON.stringify(S));
+const at=(S,d)=>S.chars.find(c=>c.dir===d),cnt=(S,d,e)=>{let n=0;for(const x of S.boss.fx[d])if(x===e)n++;return n};
+const weakDir=S=>(S.boss.face+S.boss.off)%4,W=S=>S.mult.map((m,i)=>m*S.perm[i]*(S.last===i?(S.anti||1):1));
+const probs=S=>{const w=W(S),s=w[0]+w[1]+w[2]+w[3];return w.map(x=>x/s)};
+function newGame(cf,seed){
+  rng=mul(seed*7919+13);
+  const boss=EL[rnd(5)],counter=EL.find(e=>KHAC[e]===boss),victim=KHAC[boss];
+  const els=[counter,victim,...EL.filter(e=>![boss,counter,victim].includes(e))].sort(()=>rng()-.5);
+  const cls=Object.keys(CL).sort(()=>rng()-.5).slice(0,4),fx=[[],[],[],[]];
+  ['kiem','kiem','giap','khien'].forEach(e=>fx[rnd(4)].push(e));
+  return{cf,S:{phase:'player',khi:3,used:false,rotN:0,bt:0,chain:'',pow:1,thorns:0,usedSk:{},traps:[],result:null,
+    boss:{hp:cf.bossHp,max:cf.bossHp,el:boss,face:2,off:rnd(4),fx,poison:0,weak:false,stun:false,cd:0},mult:[1,1,1,1],perm:[1,1,1,1],
+    chars:cls.map((k,i)=>({cls:k,dir:i,hp:CL[k].hp,max:CL[k].hp,sh:0,el:els[i],el0:els[i],a:CL[k].a,
+      kit:['atk',...POOL(k).sort(()=>rng()-.5).slice(0,4).map(s=>s.id)]}))}};
+}
+function hit(g,c,base,el,ign){
+  const S=g.S;el=el||c.el;let d=base*S.pow+(S.pd?S.pd*probs(S)[c.dir]:0);
+  if(cnt(S,c.dir,'khien'))return;
+  if(weakDir(S)===c.dir)d*=S.wk||2;
+  if(KHAC[el]===S.boss.el)d*=1.5;
+  if(!ign)for(let i=cnt(S,c.dir,'giap');i>0;i--)d*=.5;
+  if(S.chain&&SINH[S.chain]===c.el)d*=2;
+  if(S.hot>1){const pp=probs(S);if(pp[c.dir]>=.35&&pp[c.dir]===Math.max(...pp))d*=S.hot}
+  S.boss.hp=Math.max(0,S.boss.hp-d);
+}
+function tg(S,c,to){
+  const al=S.chars.filter(x=>x.hp>0);
+  if(to==='self')return[c];if(to==='all')return al;
+  if(to==='low')return[al.sort((a,b)=>a.hp/a.max-b.hp/b.max)[0]];
+  const d={opp:(c.dir+2)%4,cw:(c.dir+1)%4,ccw:(c.dir+3)%4,N:0,E:1,S:2,W:3}[to];const x=at(S,d);return x&&x.hp>0?[x]:[];
+}
+const pdirs=(c,to)=>to==='all'?[0,1,2,3]:[{self:c.dir,opp:(c.dir+2)%4,cw:(c.dir+1)%4,ccw:(c.dir+3)%4}[to]];
+function ex(g,c,o,sk){
+  const S=g.S,p=probs(S),po=p[c.dir];
+  switch(o.t){
+    case'dmg':{let b=(o.b||0)+(o.ba?c.a:0)+(o.p||0)*po+(o.q||0)*(1-po)+(o.pm||0)*Math.max(...p)+(o.hpx||0)*(c.max-c.hp)+(o.shx||0)*c.sh+(o.pois||0)*S.boss.poison;
+      if(o.wb&&weakDir(S)===c.dir)b+=o.wb;
+      if(o.bor){b+=cnt(S,c.dir,'kiem');S.boss.fx[c.dir]=S.boss.fx[c.dir].filter(e=>e!=='kiem')}
+      if(o.dir&&c.dir===o.dir[0])b*=o.dir[1];if(o.face&&c.dir===S.boss.face)b*=o.face;if(o.back&&c.dir===(S.boss.face+2)%4)b*=o.back;
+      if(o.rnd)b*=o.rnd[0]+rng()*(o.rnd[1]-o.rnd[0]);
+      hit(g,c,b,sk&&sk.el,o.ign);break}
+    case'sh':tg(S,c,o.to).forEach(x=>x.sh+=o.v+o.p*po);break;
+    case'hl':tg(S,c,o.to).forEach(x=>x.hp=Math.min(x.max,x.hp+o.v+o.p*po));break;
+    case'pr':pdirs(c,o.to).forEach(d=>S.mult[d]*=o.m);break;
+    case'set':{const w=W(S),oth=w.reduce((a,b)=>a+b,0)-w[c.dir];S.mult[c.dir]=o.v*oth/(1-o.v)/S.perm[c.dir];break}
+    case'eq':S.mult=[1,1,1,1];break;
+    case'inv':S.mult=S.mult.map(m=>1/m);break;
+    case'swapP':{const j=(c.dir+2)%4,t=S.mult[c.dir];S.mult[c.dir]=S.mult[j];S.mult[j]=t;break}
+    case'perm':S.perm[c.dir]=Math.max(.25,S.perm[c.dir]*o.m);break;
+    case'swap':{const t=o.w==='weak'?at(S,weakDir(S)):o.w==='low'?S.chars.filter(x=>x!==c&&x.hp>0).sort((a,b)=>a.hp/a.max-b.hp/b.max)[0]:tg(S,c,o.w)[0];
+      if(t&&t!==c){const d=c.dir;c.dir=t.dir;t.dir=d}break}
+    case'kh':S.khi=Math.min(6,S.khi+o.v);break;
+    case'khP':if(po>=o.min)S.khi=Math.min(6,S.khi+o.v);break;
+    case'poi':S.boss.poison=Math.min(5,S.boss.poison+o.v);break;
+    case'weaken':S.boss.weak=true;break;case'stun':S.boss.stun=true;S.boss.cd=3;break;
+    case'strip':if(o.what==='own')S.boss.fx[c.dir]=S.boss.fx[c.dir].filter(e=>e==='kiem');else if(o.what==='all')S.boss.fx=S.boss.fx.map(a=>a.filter(e=>e==='kiem'));else S.boss.fx=S.boss.fx.map(a=>a.filter(e=>e!=='giap'));break;
+    case'purge':S.boss.fx[c.dir]=S.boss.fx[c.dir].filter(e=>e!=='kiem');break;
+    case'pow':S.pow*=o.m;break;case'thr':S.thorns+=o.v;break;
+    case'wp':S.boss.off=(c.dir-S.boss.face+4)%4;break;
+    case'rot':S.chars.forEach(x=>x.dir=(x.dir+o.s+4)%4);break;
+    case'elem':c.el=EL.find(e=>KHAC[e]===S.boss.el);break;
+    case'hurt':c.hp-=o.v;break;
+    case'trap':S.traps.push({dir:c.dir,own:S.chars.indexOf(c),sid:sk.id,val:o.val});break;
+  }
+}
+const run=(g,c,ops,sk)=>ops.forEach(o=>ex(g,c,o,sk));
+function can(g,c,sk){
+  const S=g.S;if(S.phase!=='player'||c.hp<=0||S.khi<sk.c)return false;if(sk.lim&&S.usedSk[sk.id])return false;
+  const uni=S.mult.every(x=>x===1);
+  for(const o of sk.ops){
+    if(o.t==='hurt'&&c.hp<=o.v)return false;
+    if(o.t==='swap'){const t=o.w==='weak'?at(S,weakDir(S)):o.w==='low'?S.chars.find(x=>x!==c&&x.hp>0):tg(S,c,o.w)[0];if(!t||t===c)return false}
+    if((o.t==='dmg'&&o.bor||o.t==='purge')&&!cnt(S,c.dir,'kiem'))return false;
+    if(o.t==='strip'){const f=o.what==='own'?S.boss.fx[c.dir]:[].concat(...S.boss.fx);if(!f.some(e=>o.what==='giap'?e==='giap':e!=='kiem'))return false}
+    if(o.t==='weaken'&&S.boss.weak||o.t==='stun'&&(S.boss.stun||S.boss.cd>0)||o.t==='wp'&&weakDir(S)===c.dir||o.t==='poi'&&S.boss.poison>=5)return false;
+  }
+  return true;
+}
+function use(g,i,id){
+  const S=g.S,c=S.chars[i],sk=SKM[id];if(!can(g,c,sk))return false;
+  S.khi-=sk.c;S.used=true;S.usedSk[id]=1;run(g,c,sk.ops,sk);S.chain=c.el;check(g);return true;
+}
+function rotate(g,s){const S=g.S;if(S.phase!=='player'||S.rotN)return false;S.rotN=1;S.chars.forEach(c=>c.dir=(c.dir+s+4)%4);return true}
+function check(g){const S=g.S;if(S.boss.hp<=0){S.phase='over';S.result='win'}else if(S.chars.some(c=>c.hp<=0)){S.phase='over';S.result='lose'}}
+function bossTurn(g){
+  const S=g.S,B=S.boss;
+  if(B.stun)B.stun=false;
+  else{
+    const mv=(g.cf.moves||BM)[S.bt%(g.cf.moves||BM).length];let ds=[];
+    if(mv==='regen'){B.hp=Math.min(B.max,B.hp+5);B.fx[rnd(4)].push('giap')}
+    else if(mv==='storm')ds=[0,1,2,3];
+    else if(mv!=='skip'){const w=W(S);for(let k=0;k<(mv==='dual'?2:1);k++){const sum=w.reduce((a,b)=>a+b,0);let r=rng()*sum,d=-1;for(let i=0;i<4;i++){if(w[i]>0){d=i;if(r<w[i])break;r-=w[i]}}ds.push(d);w[d]=0}}
+    if(mv==='sweep'&&ds.length)ds=[ds[0],(ds[0]+1)%4];S.hits=ds;S.mv=mv;if(ds.length&&mv!=='storm'){B.face=ds[ds.length-1];S.last=ds[ds.length-1]}
+    for(const d of ds){
+      const c=at(S,d);let dmg=(g.cf.bd+(S.bdx||0)+cnt(S,d,'kiem'))*(mv==='storm'?.5:1)+(g.cf.boss.enrage&&B.hp<=B.max/2?.5:0);
+      if(KHAC[B.el]===c.el0)dmg*=1.5;if(B.weak)dmg*=.65;
+      const hp0=c.hp,ab=Math.min(c.sh,dmg);c.sh-=ab;c.hp=Math.max(0,c.hp-(dmg-ab));if(c.hp<=0&&hp0===c.max)S.oneShot=(S.oneShot||0)+1;
+      if(S.thorns)B.hp=Math.max(0,B.hp-S.thorns);
+      S.traps.filter(t=>t.dir===d).forEach(t=>{const o=S.chars[t.own];if(o.hp>0)run(g,o,SKM[t.sid].ops.find(x=>x.t==='trap').ops,SKM[t.sid])});
+    }
+    if(B.poison>0){B.hp=Math.max(0,B.hp-B.poison);B.poison--}
+    S.bt++;
+  }
+  if(B.cd>0)B.cd--;
+  S.mult=[1,1,1,1];S.traps=[];S.chain='';S.pow=S.pow0||1;S.thorns=0;B.weak=false;S.usedSk={};S.chars.forEach(x=>{x.sh=S.dirSh?S.dirSh[x.dir]:0;x.el=x.el0});
+  check(g);if(S.phase==='over')return;
+  S.khi=Math.min(6,S.khi+g.cf.khiT+(S.khiX||0)+(S.used?0:1));S.used=false;S.rotN=0;
+}
+// ---- bot ----
+let g;
+function V(RW){
+  const S=g.S,B=S.boss;if(B.hp<=0)return 1e3;if(S.chars.some(c=>c.hp<=0))return -1e3;
+  const mv=(g.cf.moves||BM)[S.bt%(g.cf.moves||BM).length],p=probs(S);let risk=0,refl=0;
+  if(mv!=='regen'&&!B.stun)for(let d=0;d<4;d++){
+    const pd=mv==='storm'?1:mv==='dual'?p[d]+p.reduce((a,pe,e)=>e===d?a:a+pe*p[d]/(1-pe),0):p[d];
+    const c=at(S,d);let dmg=(g.cf.bd+(S.bdx||0)+cnt(S,d,'kiem'))*(mv==='storm'?.5:1)+(g.cf.boss.enrage&&B.hp<=B.max/2?.5:0);
+    if(KHAC[B.el]===c.el0)dmg*=1.5;if(B.weak)dmg*=.65;
+    const eff=Math.max(0,dmg-c.sh);risk+=pd*(eff>=c.hp?3:eff/c.hp);
+    refl+=pd*S.thorns;for(const t of S.traps)if(t.dir===d)refl+=pd*t.val;
+  }
+  let hp=0;for(const c of S.chars)hp+=c.hp/c.max*4+.7*c.sh;
+  return 4*(B.max-B.hp)+.6*hp-RW*risk+4*refl+(B.stun?6:0)+2*B.poison*(B.poison+1)/2+.8*S.khi+2.5*(S.pow-1)*S.khi;
+}
+const acts=()=>{const r=[];g.S.chars.forEach((c,i)=>c.kit.forEach(id=>{if(can(g,c,SKM[id]))r.push([i,id])}));return r};
+function roll(RW,depth){for(let n=0;n<depth;n++){const base=g.S,v0=V(RW);let best=null;for(const [i,id] of acts()){g.S=cl(base);use(g,i,id);const dl=(V(RW)-v0)/Math.max(1,SKM[id].c);if(!best||dl>best.dl)best={i,id,dl}}g.S=base;if(!best||best.dl<.05)break;use(g,best.i,best.id)}}
+function pro(RW,st,K=6){
+  const base=g.S;let bR=0,bv=-1e9;
+  for(const r of [0,1,-1]){g.S=cl(base);if(r)rotate(g,r);roll(RW,3);const v=V(RW);if(v>bv+1e-9){bv=v;bR=r}}
+  g.S=base;if(bR)rotate(g,bR);
+  for(let n=0;n<8;n++){
+    const b0=g.S,v0=V(RW),cand=[];
+    for(const [i,id] of acts()){g.S=cl(b0);use(g,i,id);cand.push({i,id,dl:(V(RW)-v0)/Math.max(1,SKM[id].c)})}
+    g.S=b0;cand.sort((a,b)=>b.dl-a.dl);let best=null;
+    for(const c of cand.slice(0,K)){g.S=cl(b0);use(g,c.i,c.id);roll(RW,3);const v=V(RW);if(!best||v>best.v)best={...c,v}}
+    g.S=b0;if(!best||best.v<v0+.05)break;
+    const h0=g.S.boss.hp;use(g,best.i,best.id);st.use[best.id]=(st.use[best.id]||0)+1;st.dmg[best.id]=(st.dmg[best.id]||0)+h0-g.S.boss.hp;
+    if(g.S.phase!=='player')break;
+  }
+}
+function play(cf,seed,RW){
+  g=newGame(cf,seed);const st={use:{},dmg:{}};let t=0;const kits=[].concat(...g.S.chars.map(c=>c.kit)).filter(x=>x!=='atk'),cls=g.S.chars.map(c=>c.cls);
+  while(g.S.phase==='player'&&t<40){t++;pro(RW,st);if(g.S.phase!=='player')break;bossTurn(g)}
+  return{win:g.S.result==='win',t,kits,cls,use:st.use,dmg:st.dmg};
+}
+
+const TN={self:'bản thân',all:'cả đội',low:'đồng đội thấp máu nhất',opp:'người đối diện',cw:'người kế bên (thuận chiều kim đồng hồ)',ccw:'người kế bên (ngược chiều kim đồng hồ)',N:'người ở hướng Bắc'};
+const DN={self:'hướng đang đứng',opp:'hướng đối diện',cw:'hướng kế bên (thuận chiều kim đồng hồ)',ccw:'hướng kế bên (ngược chiều)',all:'cả 4 hướng'};
+const n=x=>String(+(+x).toFixed(2));
+function d(o){switch(o.t){
+ case'dmg':{let s=`Gây ${o.ba?'sát thương theo class':n(o.b)}`;if(o.b===0&&!o.ba)s='Gây ';const add=[];
+  if(o.p)add.push(`${n(o.p)}×xác suất hướng đứng bị đánh`);if(o.q)add.push(`${n(o.q)}×(100% − xác suất bị đánh)`);if(o.pm)add.push(`${n(o.pm)}×xác suất cao nhất trong 4 hướng`);
+  if(o.hpx)add.push(`${n(o.hpx)}×máu đã mất`);if(o.shx)add.push(`${n(o.shx)}×giáp đang có`);if(o.pois)add.push(`${n(o.pois)}×số tầng độc`);if(o.wb)add.push(`+${n(o.wb)} nếu đứng ở điểm yếu`);
+  if(o.bor)add.push('+1 cho mỗi ⚔️ ở hướng đứng (hút hết)');
+  let t=(o.b===0&&!o.ba?'Gây ':s+(add.length?' + ':''))+add.join(' + ');if(o.b===0&&!o.ba)t='Gây '+add.join(' + ');t+=' sát thương';if(o.b===0&&!o.ba)t=t;else if(!add.length)t=s+' sát thương';
+  if(o.dir)t+=`; ×${n(o.dir[1])} nếu đứng ở ${D[o.dir[0]]}`;if(o.face)t+=`; ×${n(o.face)} nếu đứng đúng hướng boss đang quay mặt`;if(o.back)t+=`; ×${n(o.back)} nếu đứng sau lưng boss`;
+  if(o.rnd)t+=`; ngẫu nhiên ×${n(o.rnd[0])}–${n(o.rnd[1])}`;if(o.ign)t+='; bỏ qua 🌵';return t}
+ case'sh':return `${TN[o.to]} nhận ${n(o.v)}${o.p?` + ${n(o.p)}×xác suất`:''} giáp`;
+ case'hl':return `${TN[o.to]} hồi ${n(o.v)}${o.p?` + ${n(o.p)}×xác suất`:''} máu`;
+ case'pr':return `xác suất ${DN[o.to]} ×${n(o.m)}`;case'set':return `đặt xác suất hướng đứng = ${Math.round(o.v*100)}%`;
+ case'eq':return 'đưa xác suất 4 hướng về 25%';case'inv':return 'đảo ngược xác suất các hướng';case'swapP':return 'đổi xác suất với hướng đối diện';
+ case'perm':return `vĩnh viễn: xác suất hướng đứng ×${n(o.m)}`;case'swap':return `đổi chỗ với ${({weak:'người ở điểm yếu',low:'đồng đội thấp máu nhất',opp:'người đối diện'})[o.w]}`;
+ case'kh':return `+${o.v} Khí`;case'khP':return `+${o.v} Khí nếu xác suất hướng đứng ≥ ${Math.round(o.min*100)}%`;case'poi':return `boss +${o.v} tầng độc (tối đa 5)`;
+ case'weaken':return 'đòn boss lượt tới giảm 35% sát thương';case'stun':return 'boss bỏ lượt tiếp theo (hồi chiêu 3 lượt)';
+ case'strip':return {own:'xóa 🛡️ và 🌵 ở hướng đứng',all:'xóa mọi 🛡️ và 🌵 của boss',giap:'xóa mọi 🌵 của boss'}[o.what];
+ case'purge':return 'xóa ⚔️ ở hướng đứng';case'pow':return `sát thương cả đội ×${n(o.m)} trong lượt`;case'thr':return `mỗi đòn boss ra bị phản ${o.v} sát thương`;
+ case'wp':return 'dời điểm yếu của boss về hướng đang đứng';case'rot':return 'xoay vòng cả đội 1 bước (miễn phí)';case'elem':return 'đổi hệ bản thân thành hệ khắc boss trong lượt';
+ case'hurt':return `tự mất ${o.v} máu`;case'trap':return `ĐẶT BẪY ở hướng đứng (1 lượt boss): khi boss đánh hướng này → ${o.ops.map(d).join(', ')}`}}
+
+const D=['Bắc','Đông','Nam','Tây'],CN={f:'Chiến binh',g:'Hộ vệ',x:'Sát thủ',m:'Pháp sư',t:'Kẻ lừa',b:'Con bạc',d:'Ẩn sĩ',h:'Y sư',a:'Dược sư'},CI={f:'🥊',g:'🏰',x:'🗡️',m:'🔮',t:'🎭',b:'🎲',d:'🌿',h:'💚',a:'⚗️'};
+const MN={normal:'Đòn thường',dual:'Song Kích',storm:'Thiên lôi',regen:'Tái tạo',sweep:'Quét ngang',skip:'Nghỉ'};
+const MD={normal:'đánh 1 hướng theo xác suất',dual:'đánh 2 hướng khác nhau',storm:'đánh cả 4 hướng, nửa sát thương',regen:'hồi 5 máu, thêm 🌵 vào 1 hướng',sweep:'đánh 1 hướng và hướng kế bên (thuận chiều kim đồng hồ)',skip:'không làm gì'};
+const ICON={kiem:'⚔️',khien:'🛡️',giap:'🌵'},TIP=[[4,1],[7,4],[4,7],[1,4]],PR=[[4,2],[6,4],[4,6],[2,4]],NEAR=[[4,3],[5,4],[4,5],[3,4]];
+const MV=(g,S)=>{const m=g.cf.boss.moves;return m[S.bt%m.length]};
+const DEFCF=()=>({boss:{hp:70,el:'auto',bd:1.25,enrage:true,moves:['normal','normal','regen','dual','normal','storm'],fxRand:true,fx:[[0,0,0],[0,0,0],[0,0,0],[0,0,0]]},team:[0,1,2,3].map(()=>({cls:'auto',hp:0,el:'auto',kit:null})),khi0:3,khiT:3,shT:0,dm:1,anim:2});
+let CF=DEFCF();try{const s=localStorage.getItem('tt_cf2');if(s)CF=Object.assign(DEFCF(),JSON.parse(s))}catch(e){}
+const save=()=>{try{localStorage.setItem('tt_cf2',JSON.stringify(CF))}catch(e){}};
+function newGame(cf,seed){
+  rng=seed?mul(seed*7919+13):Math.random;
+  const B=cf.boss,be=B.el==='auto'?EL[rnd(5)]:B.el,counter=EL.find(e=>KHAC[e]===be),victim=KHAC[be];
+  const pool=[counter,victim,...EL.filter(e=>![be,counter,victim].includes(e))].sort(()=>rng()-.5);
+  const used=cf.team.map(t=>t.cls).filter(c=>c!=='auto'),free=Object.keys(CL).filter(k=>!used.includes(k)).sort(()=>rng()-.5);
+  let fx=B.fx.map(a=>[...Array(a[0]).fill('kiem'),...Array(a[1]).fill('giap'),...Array(a[2]).fill('khien')]);
+  if(B.fxRand){fx=[[],[],[],[]];['kiem','kiem','giap','khien'].forEach(e=>fx[rnd(4)].push(e))}
+  return{cf:{...cf,bd:B.bd,moves:B.moves},S:{pow0:cf.dm,dirSh:[cf.shT,cf.shT,cf.shT,cf.shT],last:-1,phase:'player',khi:cf.khi0,used:false,rotN:0,bt:0,chain:'',pow:cf.dm,thorns:0,usedSk:{},traps:[],result:null,hits:[],mv:'',
+    boss:{hp:B.hp,max:B.hp,el:be,face:2,off:rnd(4),fx,poison:0,weak:false,stun:false,cd:0},mult:[1,1,1,1],perm:[1,1,1,1],
+    chars:cf.team.map((t,i)=>{const k=t.cls==='auto'?free.shift():t.cls,el=t.el==='auto'?pool.shift():t.el,hp=+t.hp||CL[k].hp;
+      const kit=t.kit&&t.kit.length?t.kit:POOL(k).sort(()=>rng()-.5).slice(0,4).map(s=>s.id);
+      return{cls:k,dir:i,hp,max:hp,sh:cf.shT,el,el0:el,a:CL[k].a,kit:['atk',...kit]}})}};
+}
+const $=id=>document.getElementById(id),f1=x=>Number(x.toFixed(1)),desc=id=>id==='atk'?'Sát thương theo class':SKM[id].ops.map(d).join('; ');
+let G=null,LG=[],FL=[],RB=null,LK=false;
+const lg=t=>{LG.unshift(t);LG=LG.slice(0,40)};
+// ---- cấu hình ----
+const inp=(p,v,ex='')=>`<input data-p="${p}" type="number" value="${v}" ${ex} onchange="sv(this)">`;
+const sel=(p,v,o,r,nm)=>`<select data-p="${p}" ${r?'data-r="1"':''} ${nm?'data-n="1"':''} onchange="sv(this)">${o.map(([k,l])=>`<option value="${k}"${k==v?' selected':''}>${l}</option>`).join('')}</select>`;
+const chk=(p,v,r)=>`<input data-p="${p}" type="checkbox" ${v?'checked':''} ${r?'data-r="1"':''} onchange="sv(this)">`;
+const ELO=[['auto','Tự động'],...EL.map(e=>[e,e])],CLO=[['auto','Ngẫu nhiên'],...Object.keys(CN).map(k=>[k,CI[k]+' '+CN[k]])];
+const SKOPT='<option value="">+ Thêm skill…</option>'+Object.keys(CN).map(k=>`<optgroup label="${CN[k]}">${SKILLS.filter(s=>s.cls===k).map(s=>`<option value="${s.id}">${s.name} (${s.c} Khí${s.el?', '+s.el:''})</option>`).join('')}</optgroup>`).join('');
+function sv(el){const p=el.dataset.p.split('.');let o=CF;for(let i=0;i<p.length-1;i++)o=o[p[i]];const k=p[p.length-1];o[k]=el.type==='checkbox'?el.checked:(el.type==='number'||el.dataset.n)?+el.value:el.value;
+  if(k==='cls')CF.team[+p[1]].kit=null;save();if(el.dataset.r)setup()}
+function kset(i,f){const t=CF.team[i];t.kit=f(t.kit||[]);if(!t.kit.length)t.kit=null;save();setup()}
+const kAdd=(i,id)=>{if(id)kset(i,k=>k.includes(id)?k:[...k,id])},kDel=(i,id)=>kset(i,k=>k.filter(x=>x!==id)),kAll=i=>{const c=CF.team[i].cls;if(c!=='auto')kset(i,()=>POOL(c).map(s=>s.id))};
+function resetCf(){CF=DEFCF();save();setup()}
+function setup(){
+  const B=CF.boss;
+  $('setupBody').innerHTML=`<div class="grid2"><div class="panel"><h3>Boss</h3>
+  <div class="fl"><label>HP ${inp('boss.hp',B.hp,'min="1"')}</label><label>Hệ ${sel('boss.el',B.el,ELO)}</label><label>Sát thương nền ${inp('boss.bd',B.bd,'step="0.25" min="0"')}</label><label>${chk('boss.enrage',B.enrage)} Cuồng nộ dưới 50% máu (+0.5)</label></div>
+  <p class="tag">Kỹ năng boss (chu kỳ ${B.moves.length} lượt, lặp lại):</p><div class="fl">${B.moves.map((m,i)=>sel('boss.moves.'+i,m,Object.keys(MN).map(k=>[k,MN[k]]))).join('')}</div>
+  <p class="tag">Hiệu ứng hướng: <label>${chk('boss.fxRand',B.fxRand,1)} ngẫu nhiên (2⚔️ 1🌵 1🛡️)</label></p>
+  ${B.fxRand?'':`<div class="fl">${D.map((n,i)=>`<label>${n}: ⚔️${inp('boss.fx.'+i+'.0',B.fx[i][0],'min="0" max="5" style="width:48px"')} 🌵${inp('boss.fx.'+i+'.1',B.fx[i][1],'min="0" max="5" style="width:48px"')} 🛡️${inp('boss.fx.'+i+'.2',B.fx[i][2],'min="0" max="3" style="width:48px"')}</label>`).join('')}</div>`}
+  </div><div class="panel"><h3>Buff cả đội</h3><div class="fl"><label>Khí đầu trận ${inp('khi0',CF.khi0,'min="0" max="6"')}</label><label>Khí mỗi lượt ${inp('khiT',CF.khiT,'min="0" max="6"')}</label><label>Giáp mỗi lượt ${inp('shT',CF.shT,'min="0" step="0.5"')}</label><label>Sát thương đội ×${inp('dm',CF.dm,'min="0.1" step="0.1"')}</label><label>Hoạt ảnh chọn mục tiêu ${sel('anim',CF.anim,[[0,'Nhanh (~1 giây)'],[1,'Thường (~2 giây)'],[2,'Hồi hộp (~4 giây)']],0,1)}</label></div>
+  <p class="tag">Ô nhân vật theo hướng: 0 = Bắc, 1 = Đông, 2 = Nam, 3 = Tây. HP để 0 = theo class.</p></div></div>
+  <div class="chars">${CF.team.map((t,i)=>`<div class="panel"><h3>${D[i]}</h3><div class="fl"><label>Class ${sel('team.'+i+'.cls',t.cls,CLO,1)}</label><label>HP ${inp('team.'+i+'.hp',t.hp||'','placeholder="'+(t.cls==='auto'?'class':CL[t.cls].hp)+'" style="width:60px"')}</label><label>Hệ ${sel('team.'+i+'.el',t.el,ELO)}</label></div>
+  <div class="chips">${t.kit?t.kit.map(id=>`<span class="chip" title="${desc(id)}">${SKM[id].name} <a href="#" onclick="kDel(${i},'${id}');return false">×</a></span>`).join(''):'<span class="tag">Skill: tự động (4 ngẫu nhiên của class)</span>'}</div>
+  <div class="fl"><select onchange="kAdd(${i},this.value)">${SKOPT}</select><button onclick="kAll(${i})">Cả class</button><button onclick="kset(${i},()=>[])">Tự động</button></div></div>`).join('')}</div>
+  <div class="row"><button class="pri" onclick="start()">Bắt đầu ván</button><button onclick="start(Math.floor(Math.random()*1e6)+1)">Ván cố định ngẫu nhiên</button><button onclick="simulate()">Bot chạy 30 ván</button><button onclick="resetCf()">Mặc định</button></div><p class="tag" id="simout"></p>`;
+}
+function simulate(){const o=$('simout');o.textContent='Đang chạy…';setTimeout(()=>{const keep=g;let w=0,t=0;const N=30;for(let k=0;k<N;k++){const r=play(CF,1000+k,20);w+=r.win;t+=r.t}g=keep;rng=Math.random;o.textContent=`Bot (nhìn trước 1 lượt) thắng ${Math.round(100*w/N)}% trong ${N} ván, trung bình ${(t/N).toFixed(1)} lượt.`},30)}
+// ---- ván đấu ----
+function start(seed,cf){G=newGame(cf||CF,seed);rng=Math.random;LG=[];RB=null;LK=false;FL=[];$('setup').open=false;lg(`Ván mới${seed?' (seed '+seed+')':''}. Boss hệ ${G.S.boss.el}.`);render()}
+function act(i,id){const S=G.S,c=S.chars[i],h0=S.boss.hp,pm=S.mult.join();if(!use(G,i,id))return;LK=true;const dm=h0-S.boss.hp;
+  lg(`${CN[c.cls]} dùng ${SKM[id].name}${dm>0?`: boss −${f1(dm)}`:''}${S.mult.join()!==pm?' (xác suất đổi)':''}.`);
+  if(S.phase==='over')lg(S.result==='win'?'Boss bị đánh bại!':'Một nhân vật bị hạ gục.');render()}
+function doRot(s){const S=G.S;if(S.phase!=='player'||S.rotN)return;RB=S.chars.map(c=>c.dir);rotate(G,s);LK=false;lg(`Xoay vòng ${s>0?'cùng':'ngược'} chiều kim đồng hồ.`);render()}
+function undoRot(){if(!RB||LK||!G.S.rotN)return;G.S.chars.forEach((c,i)=>c.dir=RB[i]);G.S.rotN=0;RB=null;lg('Hủy xoay.');render()}
+let BUSY=false,SCN=-1;const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function scanTo(V,t,sc,base){const n=base+(((t-SCN-base)%4)+4)%4;if(SCN<0)SCN=Math.floor(Math.random()*4);
+  for(let i=1;i<=n;i++){SCN=(SCN+1)%4;FL=[];render(V);await sleep(Math.round((50+330*Math.pow(i/n,3))*sc))}}
+async function endT(){if(BUSY)return;const S=G.S;if(S.phase!=='player')return;BUSY=true;
+  const snap=cl(S),hp=S.chars.map(c=>c.hp),hb=S.boss.hp;S.hits=[];S.mv='stun';bossTurn(G);
+  const hits=S.hits.slice(),mv=S.mv,sc=[.35,1,2][CF.anim==null?2:CF.anim];SCN=-1;FL=[];
+  lg('Boss đang chọn mục tiêu…');render(snap);
+  if(mv==='storm'){for(let d=0;d<4;d++){FL=[d];render(snap);await sleep(260*sc)}FL=[0,1,2,3];render(snap);await sleep(600*sc)}
+  else if(hits.length)for(let k=0;k<hits.length;k++){await scanTo(snap,hits[k],sc,k?8:14);SCN=hits[k];await sleep(250*sc);SCN=-1;FL=[hits[k]];render(snap);await sleep(700*sc)}
+  else await sleep(500);
+  SCN=-1;LG.shift();
+  lg(`Boss ${mv==='stun'?'bị choáng, bỏ lượt':MN[mv]+(hits.length?' → '+hits.map(d=>D[d]).join(', '):'')}.`);
+  S.chars.forEach((c,i)=>{if(hp[i]>c.hp)lg(`${CN[c.cls]} mất ${f1(hp[i]-c.hp)} máu.`)});if(f1(hb-S.boss.hp)!==0)lg(`Boss ${hb>S.boss.hp?'mất':'hồi'} ${f1(Math.abs(hb-S.boss.hp))} máu (độc/phản/hồi).`);
+  if(S.phase==='over')lg(S.result==='win'?'Boss bị đánh bại!':'Một nhân vật bị hạ gục.');else lg('Đến lượt bạn.');
+  RB=null;LK=false;FL=hits;BUSY=false;render();setTimeout(()=>{FL=[];render()},900)}
+function toggleSetup(){const s=$('setup');s.open=!s.open;if(s.open)s.scrollIntoView()}
+function render(V0){
+  if(!G)return;const S=V0||G.S,B=S.boss,p=probs(S),wd=weakDir(S),pl=S.phase==='player'&&!BUSY,cells=[];
+  for(let y=1;y<=7;y++)for(let x=1;x<=7;x++){
+    if(Math.abs(x-4)+Math.abs(y-4)>3)continue;let cls='c',h='',d;
+    if((d=TIP.findIndex(t=>t[0]===x&&t[1]===y))>=0){const c=at(S,d);cls='c tip';h=`<div class="tok${c.hp<=0?' dead':''}" style="background:var(--${c.el})" title="${CN[c.cls]} · ${c.el}"><i>${CI[c.cls]}</i>${f1(c.hp)}${c.sh?'+'+f1(c.sh):''}</div><span class="dl" style="${['top:-17px','right:-18px','bottom:-17px','left:-18px'][d]}">${'BĐNT'[d]}</span>`}
+    else if((d=PR.findIndex(t=>t[0]===x&&t[1]===y))>=0){h=f1(p[d]*100)+' %';if(SCN===d)cls+=' scan';if(FL.includes(d))cls+=' hit'}
+    else if((d=NEAR.findIndex(t=>t[0]===x&&t[1]===y))>=0){if(d===wd)cls+=' weak';h=`<div class="fx">${B.fx[d].map(e=>ICON[e]).join('')}</div>`}
+    else if(x===4&&y===4){cls+=' boss';h=`<svg viewBox="0 0 40 40" style="transform:rotate(${B.face*90}deg)"><path d="M20 4 L34 34 L6 34Z" fill="var(--boss)"/></svg>`}
+    cells.push(`<div class="${cls}" style="grid-column:${x};grid-row:${y}">${h}</div>`);
+  }
+  $('board').innerHTML=cells.join('');
+  const mv=MV(G,S),fxT=B.fx.map((a,i)=>a.length?`${D[i]}: ${a.map(e=>ICON[e]).join('')}`:'').filter(Boolean).join(' · ');
+  $('boss').innerHTML=`<b>Boss</b> · hệ <b style="color:var(--${B.el})">${B.el}</b>${G.cf.boss.enrage&&B.hp<=B.max/2?' · <b>Cuồng nộ</b>':''}<div class="bar"><i style="width:${B.hp/B.max*100}%"></i></div><span class="tag">${f1(B.hp)} / ${B.max} HP · quay mặt về <b>${D[B.face]}</b> · điểm yếu ở <b>${D[wd]}</b><br>Hiệu ứng hướng: ${fxT||'không có'}${B.poison?` · độc ${B.poison}`:''}${B.weak?' · bị làm yếu':''}${B.stun?' · bị choáng':''}<br><b>Lượt boss tới: ${B.stun?'bị choáng':MN[mv]}</b> (${MD[mv]})</span>`;
+  $('status').innerHTML=S.phase==='over'?`<p class="msg">${S.result==='win'?'Chiến thắng! Boss đã gục.':'Thất bại: một nhân vật đã bị hạ gục.'}</p>`:`<b>${BUSY?'Boss đang chọn mục tiêu…':'Lượt của bạn'}</b> <span class="tag">Xoay vòng: ${S.rotN?'đã dùng':'còn 1 lần'}</span><div class="tag">${S.chain?`Chuỗi tương sinh: hệ <b>${S.chain}</b> → hệ <b>${SINH[S.chain]}</b> gây ×2`:'Chưa có chuỗi tương sinh'}${S.pow!==1?` · sát thương đội ×${f1(S.pow)}`:''}</div>`;
+  $('khibox').innerHTML=`<span class="kn">${S.khi}</span><span class="kl">Khí<br>tối đa 6</span><span class="pips">${'◆'.repeat(S.khi)}${'◇'.repeat(6-S.khi)}</span>`;
+  $('bcw').disabled=$('bccw').disabled=!pl||!!S.rotN;$('bundo').disabled=!pl||!S.rotN||LK;$('bnew').disabled=BUSY;$('bend').disabled=!pl;
+  $('log').innerHTML=LG.slice(0,12).map(t=>`<li>${t}</li>`).join('');
+  $('cards').innerHTML=S.chars.map((c,i)=>`<div class="panel ch" style="--ec:var(--${c.el})"><h3><span>${CI[c.cls]} ${CN[c.cls]}</span><span class="tag">${D[c.dir]} · ${c.el}</span></h3><div class="bar"><i style="width:${Math.min(100,c.hp/c.max*100)}%"></i></div>
+  <div class="tag">${f1(c.hp)} / ${c.max} HP${c.sh?' · giáp '+f1(c.sh):''}${KHAC[c.el]===B.el?' · <b>hệ khắc boss</b>':''}${KHAC[B.el]===c.el0?' · <b>bị boss khắc ×1.5</b>':''}${S.chain&&SINH[S.chain]===c.el?' · <b>×2 tương sinh</b>':''}</div>
+  ${c.kit.map(id=>`<div class="sk"><button ${!BUSY&&can(G,c,SKM[id])?'':'disabled'} onclick="act(${i},'${id}')"><span>${SKM[id].name}</span><span>${SKM[id].c} ◆${SKM[id].el?' · '+SKM[id].el:''}</span></button><div class="tag">${desc(id)}</div></div>`).join('')}</div>`).join('');
+}
+setup();start(0,DEFCF());
+
+</script></body></html>
